@@ -177,6 +177,7 @@ async fn walk(
     rqctx: Arc<RequestContext<ExampleContext>>,
     update: TypedBody<Path>,
 ) -> Result<HttpResponseOk<Paths>, HttpError> {
+    let _api_context = rqctx.context();
     let updated_value = update.into_inner();
 
     Ok(HttpResponseOk(Paths {
