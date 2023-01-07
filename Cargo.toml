@@ -6,3 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+walkdir = "2.3.2"
+serde_json = "1.0.91"
+dropshot = "0.8.0"
+
+[dependencies.serde]
+version = "1.0.152"
+features = [ "derive" ]
+
+[dependencies.schemars]
+version = "0.8.11"
+features = [ "uuid1" ]
+
+[dependencies.tokio]
+version = "1.19"
+features = [ "full" ]
