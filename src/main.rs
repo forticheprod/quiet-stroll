@@ -118,7 +118,7 @@ struct CounterValue {
 }
 #[derive(Deserialize, Serialize, JsonSchema)]
 struct Path {
-    input_path: String,
+    input_path: String;
 }
 
 /**
