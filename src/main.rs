@@ -116,6 +116,10 @@ impl ExampleContext {
 struct CounterValue {
     counter: u64,
 }
+#[derive(Deserialize, Serialize, JsonSchema)]
+struct Path {
+    input_path: String,
+}
 
 /**
  * Fetch the current value of the counter.
@@ -166,15 +170,17 @@ async fn example_api_put_counter(
  * Fetch the walk path.
  */
 #[endpoint {
-    method = GET,
+    method = PUT,
     path = "/walk",
 }]
 async fn walk(
     rqctx: Arc<RequestContext<ExampleContext>>,
+    update: TypedBody<Path>,
 ) -> Result<HttpResponseOk<Paths>, HttpError> {
-    let api_context = rqctx.context();
+    let _api_context = rqctx.context();
+    let updated_value = update.into_inner();
 
     Ok(HttpResponseOk(Paths {
-        paths_list: get_paths("/data"),
+        paths_list: get_paths(&updated_value.input_path),
     }))
 }
