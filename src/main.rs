@@ -13,6 +13,7 @@ use jwalk::WalkDir;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
+use std::env;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -38,8 +39,12 @@ async fn main() -> Result<(), String> {
      * request port 0, which allows the operating system to pick any available
      * port.
      */
+    let port = match env::var_os("PORT") {
+        Some(v) => v.into_string().unwrap(),
+        None => panic!("$PORT is not set"),
+    };
     let config_dropshot: ConfigDropshot = ConfigDropshot {
-        bind_address: "127.0.0.1:8080".parse().unwrap(),
+        bind_address: format!("127.0.0.1:{}", port).parse().unwrap(),
         request_body_max_bytes: 1024,
         tls: None,
     };
