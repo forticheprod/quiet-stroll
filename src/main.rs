@@ -22,11 +22,11 @@ struct Paths {
     paths_list: Vec<String>,
 }
 fn get_paths(input_path: &str) -> Vec<String> {
-    let mut items: Vec<String> = vec![];
-    for entry in WalkDir::new(input_path) {
-        let entry = entry.unwrap();
-        items.push(entry.path().display().to_string());
-    }
+    let items: Vec<String> = WalkDir::new(input_path)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|x| x.path().display().to_string())
+        .collect();
     items
 }
 
