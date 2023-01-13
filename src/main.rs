@@ -9,13 +9,13 @@ use dropshot::HttpResponseUpdatedNoContent;
 use dropshot::HttpServerStarter;
 use dropshot::RequestContext;
 use dropshot::TypedBody;
+use jwalk::WalkDir;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use walkdir::WalkDir;
 
 #[derive(Deserialize, Serialize, JsonSchema)]
 struct Paths {

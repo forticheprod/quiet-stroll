@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-walkdir = "2.3.2"
+jwalk = "0.5"
 serde_json = "1.0.91"
 dropshot = "0.8.0"
 
