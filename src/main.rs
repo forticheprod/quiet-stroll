@@ -43,8 +43,12 @@ async fn main() -> Result<(), String> {
         Some(v) => v.into_string().unwrap(),
         None => panic!("$PORT is not set"),
     };
+    let ip_address = match env::var_os("IP_ADDRESS") {
+        Some(v) => v.into_string().unwrap(),
+        None => panic!("$IP_ADDRESS is not set"),
+    };
     let config_dropshot: ConfigDropshot = ConfigDropshot {
-        bind_address: format!("127.0.0.1:{}", port).parse().unwrap(),
+        bind_address: format!("{}:{}", ip_address, port).parse().unwrap(),
         request_body_max_bytes: 1024,
         tls: None,
     };
