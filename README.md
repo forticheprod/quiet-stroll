@@ -11,3 +11,14 @@ This repository is intend to create a POC of using rust to deliver client/server
 - walk is perform by [jwalk](https://github.com/Byron/jwalk)
 - REST server is perform by [dropshot](https://github.com/oxidecomputer/dropshot)
 - glob is perform by [glob](https://docs.rs/glob/latest/glob/)
+
+## Installation
+
+## Before running
+
+You need to define environement variables
+
+| Variable  | Value                                              |
+|-----------|----------------------------------------------------|
+| IP_ADRESS | Bind ip adress: "127.0.0.1" for testing            |
+| PORT      | any port usable with the host: 8080 should be good |
