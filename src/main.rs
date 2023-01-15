@@ -14,6 +14,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use std::env;
+use std::fs;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -24,6 +25,15 @@ struct Paths {
 }
 fn get_paths(input_path: &str) -> Vec<String> {
     let items: Vec<String> = WalkDir::new(input_path)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|x| x.path().display().to_string())
+        .collect();
+    items
+}
+
+fn get_list_dir(input_path: &str)->Vec<String>{
+    let items: Vec<Sting> = fs::read_dir(input_path)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
@@ -71,6 +81,7 @@ async fn main() -> Result<(), String> {
     api.register(example_api_get_counter).unwrap();
     api.register(example_api_put_counter).unwrap();
     api.register(walk).unwrap();
+    api.register(listdir).unwrap();
 
     /*
      * The functions that implement our API endpoints will share this context.
@@ -193,3 +204,19 @@ async fn walk(
         paths_list: get_paths(&updated_value.input_path),
     }))
 }
+
+#[endpoint {
+    method = PUT,
+    path = "/listdir",
+}]
+async fn listdir(
+    rqctx: Arc<RequestContext<ExampleContext>>,
+    update: TypedBody<Path>,
+) -> Result<HttpResponseOk<Paths>, HttpError> {
+    let _api_context = rqctx.context();
+    let updated_value = update.into_inner();
+
+    Ok(HttpResponseOk(Paths {
+        paths_list: get_list_dir(&updated_value.input_path),
+    }))
+)
