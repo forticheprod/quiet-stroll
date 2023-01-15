@@ -33,11 +33,10 @@ fn get_paths(input_path: &str) -> Vec<String> {
 }
 
 fn get_list_dir(input_path: &str)->Vec<String>{
-    let items: Vec<Sting> = fs::read_dir(input_path)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|x| x.path().display().to_string())
-        .collect();
+    let items: Vec<String> = fs::read_dir(input_path)
+    .unwarp()
+    .map(|r| r.path()) // This is safe, since we only have the Ok variants
+    .collect();
     items
 }
 
