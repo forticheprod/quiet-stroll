@@ -35,13 +35,8 @@ fn get_paths(input_path: &str) -> Vec<String> {
 fn get_list_dir(input_path: &str) -> Vec<String> {
     let items: Vec<String> = fs::read_dir(input_path)
         .unwrap()
-        .filter_map(|entry| {
-            entry.ok().and_then(|e| {
-                e.path()
-                    .file_name()
-                    .and_then(|n| n.to_str().map(|s| String::from(s)))
-            })
-        })
+        .filter_map(|e| e.ok())
+        .map(|x| x.path().display().to_string())
         .collect();
     items
 }
