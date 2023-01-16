@@ -9,6 +9,7 @@ use dropshot::HttpResponseUpdatedNoContent;
 use dropshot::HttpServerStarter;
 use dropshot::RequestContext;
 use dropshot::TypedBody;
+use glob::glob;
 use jwalk::WalkDir;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -37,6 +38,14 @@ fn get_list_dir(input_path: &str) -> Vec<String> {
         .unwrap()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
+        .collect();
+    items
+}
+fn get_glob(input_path: &str) -> Vec<String> {
+    let items: Vec<String> = glob(input_path)
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .map(|x| x.display().to_string())
         .collect();
     items
 }
@@ -80,8 +89,9 @@ async fn main() -> Result<(), String> {
     let mut api = ApiDescription::new();
     api.register(example_api_get_counter).unwrap();
     api.register(example_api_put_counter).unwrap();
-    api.register(walk).unwrap();
-    api.register(listdir).unwrap();
+    api.register(fwalk).unwrap();
+    api.register(flistdir).unwrap();
+    api.register(fglob).unwrap();
 
     /*
      * The functions that implement our API endpoints will share this context.
@@ -193,7 +203,7 @@ async fn example_api_put_counter(
     method = PUT,
     path = "/walk",
 }]
-async fn walk(
+async fn fwalk(
     rqctx: Arc<RequestContext<ExampleContext>>,
     update: TypedBody<Path>,
 ) -> Result<HttpResponseOk<Paths>, HttpError> {
@@ -209,7 +219,7 @@ async fn walk(
     method = PUT,
     path = "/listdir",
 }]
-async fn listdir(
+async fn flistdir(
     rqctx: Arc<RequestContext<ExampleContext>>,
     update: TypedBody<Path>,
 ) -> Result<HttpResponseOk<Paths>, HttpError> {
@@ -218,5 +228,21 @@ async fn listdir(
 
     Ok(HttpResponseOk(Paths {
         paths_list: get_list_dir(&updated_value.input_path),
+    }))
+}
+
+#[endpoint {
+    method = PUT,
+    path = "/glob",
+}]
+async fn fglob(
+    rqctx: Arc<RequestContext<ExampleContext>>,
+    update: TypedBody<Path>,
+) -> Result<HttpResponseOk<Paths>, HttpError> {
+    let _api_context = rqctx.context();
+    let updated_value = update.into_inner();
+
+    Ok(HttpResponseOk(Paths {
+        paths_list: get_glob(&updated_value.input_path),
     }))
 }
