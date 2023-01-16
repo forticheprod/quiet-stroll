@@ -32,11 +32,17 @@ fn get_paths(input_path: &str) -> Vec<String> {
     items
 }
 
-fn get_list_dir(input_path: &str)->Vec<String>{
+fn get_list_dir(input_path: &str) -> Vec<String> {
     let items: Vec<String> = fs::read_dir(input_path)
-    .unwarp()
-    .map(|r| r.path()) // This is safe, since we only have the Ok variants
-    .collect();
+        .unwrap()
+        .filter_map(|entry| {
+            entry.ok().and_then(|e| {
+                e.path()
+                    .file_name()
+                    .and_then(|n| n.to_str().map(|s| String::from(s)))
+            })
+        })
+        .collect();
     items
 }
 
@@ -218,4 +224,4 @@ async fn listdir(
     Ok(HttpResponseOk(Paths {
         paths_list: get_list_dir(&updated_value.input_path),
     }))
-)
+}
