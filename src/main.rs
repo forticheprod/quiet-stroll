@@ -87,8 +87,6 @@ async fn main() -> Result<(), String> {
      * Build a description of the API.
      */
     let mut api = ApiDescription::new();
-    api.register(example_api_get_counter).unwrap();
-    api.register(example_api_put_counter).unwrap();
     api.register(fwalk).unwrap();
     api.register(flistdir).unwrap();
     api.register(fglob).unwrap();
@@ -116,8 +114,6 @@ async fn main() -> Result<(), String> {
  * Application-specific example context (state shared by handler functions)
  */
 struct ExampleContext {
-    /** counter that can be manipulated by requests to the HTTP API */
-    counter: AtomicU64,
     paths_list: Vec<String>,
 }
 
@@ -127,7 +123,6 @@ impl ExampleContext {
      */
     pub fn new() -> ExampleContext {
         ExampleContext {
-            counter: AtomicU64::new(0),
             paths_list: Vec::<String>::new(),
         }
     }
@@ -137,65 +132,10 @@ impl ExampleContext {
  * HTTP API interface
  */
 
-/**
- * `CounterValue` represents the value of the API's counter, either as the
- * response to a GET request to fetch the counter or as the body of a PUT
- * request to update the counter.
- */
-#[derive(Deserialize, Serialize, JsonSchema)]
-struct CounterValue {
-    counter: u64,
-}
 #[derive(Deserialize, Serialize, JsonSchema)]
 struct Path {
     input_path: String,
 }
-
-/**
- * Fetch the current value of the counter.
- */
-#[endpoint {
-    method = GET,
-    path = "/counter",
-}]
-async fn example_api_get_counter(
-    rqctx: Arc<RequestContext<ExampleContext>>,
-) -> Result<HttpResponseOk<CounterValue>, HttpError> {
-    let api_context = rqctx.context();
-
-    Ok(HttpResponseOk(CounterValue {
-        counter: api_context.counter.load(Ordering::SeqCst),
-    }))
-}
-
-/**
- * Update the current value of the counter.  Note that the special value of 10
- * is not allowed (just to demonstrate how to generate an error).
- */
-#[endpoint {
-    method = PUT,
-    path = "/counter",
-}]
-async fn example_api_put_counter(
-    rqctx: Arc<RequestContext<ExampleContext>>,
-    update: TypedBody<CounterValue>,
-) -> Result<HttpResponseUpdatedNoContent, HttpError> {
-    let api_context = rqctx.context();
-    let updated_value = update.into_inner();
-
-    if updated_value.counter == 10 {
-        Err(HttpError::for_bad_request(
-            Some(String::from("BadInput")),
-            format!("do not like the number {}", updated_value.counter),
-        ))
-    } else {
-        api_context
-            .counter
-            .store(updated_value.counter, Ordering::SeqCst);
-        Ok(HttpResponseUpdatedNoContent())
-    }
-}
-
 /**
  * Fetch the walk path.
  */
