@@ -5,7 +5,6 @@ use dropshot::ConfigLogging;
 use dropshot::ConfigLoggingLevel;
 use dropshot::HttpError;
 use dropshot::HttpResponseOk;
-use dropshot::HttpResponseUpdatedNoContent;
 use dropshot::HttpServerStarter;
 use dropshot::RequestContext;
 use dropshot::TypedBody;
@@ -16,8 +15,6 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::env;
 use std::fs;
-use std::sync::atomic::AtomicU64;
-use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
 #[derive(Deserialize, Serialize, JsonSchema)]
