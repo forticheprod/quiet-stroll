@@ -37,6 +37,10 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
+#[get("/coffe")]
+fn coffe() -> status::Custom<content::RawJson<&'static str>> {
+    status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
+}
 #[post("/listdir", format = "application/json", data = "<input_path>")]
 fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_listdir(input_path))
@@ -52,10 +56,6 @@ fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_walk(input_path))
 }
 
-#[get("/coffe")]
-fn coffe() -> status::Custom<content::RawJson<&'static str>> {
-    status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
-}
 #[launch]
 fn rocket() -> _ {
     rocket::build().mount("/", routes![index, flistdir, fglob, fwalk, coffe])
