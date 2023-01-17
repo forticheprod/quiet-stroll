@@ -41,8 +41,8 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 #[openapi(tag = "Fun")]
-#[get("/coffe")]
-fn coffe() -> status::Custom<content::RawJson<&'static str>> {
+#[get("/coffee")]
+fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
 #[openapi(tag = "FileSystem")]
@@ -66,7 +66,7 @@ async fn main() {
     let launch_result = rocket::build()
         .mount(
             "/",
-            openapi_get_routes![index, flistdir, fglob, fwalk, coffe],
+            openapi_get_routes![index, flistdir, fglob, fwalk, coffee],
         )
         .mount(
             "/docs/",
