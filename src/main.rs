@@ -50,32 +50,23 @@ struct Paths {
 
 #[post("/listdir", format = "application/json", data = "<input_path>")]
 fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
-    let p: &str = &input_path.input_path[..];
-    println!("{}", p);
-    let body: Paths = Paths {
-        output_paths: get_list_dir(p),
-    };
-    Json(body)
+    Json(Paths {
+        output_paths: get_list_dir(&input_path.input_path[..]),
+    })
 }
 
 #[post("/glob", format = "application/json", data = "<input_path>")]
 fn fglob(input_path: Json<InputPath>) -> Json<Paths> {
-    let p: &str = &input_path.input_path[..];
-    println!("{}", p);
-    let body: Paths = Paths {
-        output_paths: get_glob(p),
-    };
-    Json(body)
+    Json(Paths {
+        output_paths: get_glob(&input_path.input_path[..]),
+    })
 }
 
 #[post("/walk", format = "application/json", data = "<input_path>")]
 fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
-    let p: &str = &input_path.input_path[..];
-    println!("{}", p);
-    let body: Paths = Paths {
-        output_paths: get_walk(p),
-    };
-    Json(body)
+    Json(Paths {
+        output_paths: get_walk(&input_path.input_path[..]),
+    })
 }
 
 #[get("/coffe")]
