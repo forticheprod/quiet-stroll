@@ -1,42 +1,10 @@
-use glob::glob;
-use jwalk::WalkDir;
-use std::fs;
+mod utils;
 #[macro_use]
 extern crate rocket;
 use rocket::http::Status;
 use rocket::response::{content, status};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
-fn get_walk(input_path: &str) -> Vec<String> {
-    let items: Vec<String> = WalkDir::new(input_path)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|x| x.path().display().to_string())
-        .collect();
-    items
-}
-
-fn get_list_dir(input_path: &str) -> Vec<String> {
-    let items: Vec<String> = fs::read_dir(input_path)
-        .unwrap()
-        .filter_map(|e| e.ok())
-        .map(|x| x.path().display().to_string())
-        .collect();
-    items
-}
-fn get_glob(input_path: &str) -> Vec<String> {
-    let items: Vec<String> = glob(input_path)
-        .unwrap()
-        .filter_map(|e| e.ok())
-        .map(|x| x.display().to_string())
-        .collect();
-    items
-}
-
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
 #[derive(Deserialize)]
 #[serde(crate = "rocket::serde")]
 struct InputPath {
@@ -47,26 +15,41 @@ struct InputPath {
 struct Paths {
     output_paths: Vec<String>,
 }
+impl Paths {
+    pub fn from_listdir(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            output_paths: utils::get_list_dir(&input_path.input_path[..]),
+        }
+    }
+    pub fn from_glob(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            output_paths: utils::get_glob(&input_path.input_path[..]),
+        }
+    }
+    pub fn from_walk(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            output_paths: utils::get_walk(&input_path.input_path[..]),
+        }
+    }
+}
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
 
 #[post("/listdir", format = "application/json", data = "<input_path>")]
 fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths {
-        output_paths: get_list_dir(&input_path.input_path[..]),
-    })
+    Json(Paths::from_listdir(input_path))
 }
 
 #[post("/glob", format = "application/json", data = "<input_path>")]
 fn fglob(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths {
-        output_paths: get_glob(&input_path.input_path[..]),
-    })
+    Json(Paths::from_glob(input_path))
 }
 
 #[post("/walk", format = "application/json", data = "<input_path>")]
 fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths {
-        output_paths: get_walk(&input_path.input_path[..]),
-    })
+    Json(Paths::from_walk(input_path))
 }
 
 #[get("/coffe")]
