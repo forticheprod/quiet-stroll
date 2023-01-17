@@ -3,6 +3,8 @@ use jwalk::WalkDir;
 use std::fs;
 #[macro_use]
 extern crate rocket;
+use rocket::http::Status;
+use rocket::response::{content, status};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
 fn get_walk(input_path: &str) -> Vec<String> {
@@ -75,7 +77,12 @@ fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
     };
     Json(body)
 }
+
+#[get("/coffe")]
+fn coffe() -> status::Custom<content::RawJson<&'static str>> {
+    status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
+}
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, flistdir, fglob, fwalk])
+    rocket::build().mount("/", routes![index, flistdir, fglob, fwalk, coffe])
 }
