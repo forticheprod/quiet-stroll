@@ -3,8 +3,6 @@ use jwalk::WalkDir;
 use std::fs;
 #[macro_use]
 extern crate rocket;
-use rocket::http::Status;
-use rocket::response::{content, status};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
 fn get_walk(input_path: &str) -> Vec<String> {
