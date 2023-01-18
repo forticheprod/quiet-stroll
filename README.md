@@ -17,3 +17,7 @@ This repository is intend to create a POC of using rust to deliver client/server
 ## Installation
 
 ## Before running
+
+## License
+
+Quiet Stroll is licensed under MIT License (LICENSE-MIT or <http://opensource.org/licenses/MIT>)
