@@ -4,6 +4,11 @@ version = "0.3.2"
 edition = "2021"
 authors = ["Philippe Llerena"]
 readme = "README.md"
+license = "MIT"
+license-file = "LICENSE"
+documentation = "https://github.com/doubleailes/quiet-stroll/blob/main/README.md"
+repository = "https://github.com/doubleailes/quiet-stroll"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,4 +23,5 @@ version = "0.5.0-rc.2"
 features = ["json"]
 
 [dependencies.rocket_okapi]
+version = "0.8.0-rc.2"
 features = ["swagger"]
