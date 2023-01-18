@@ -23,3 +23,26 @@ pub fn get_glob(input_path: &str) -> Vec<String> {
         .map(|x| x.display().to_string())
         .collect()
 }
+#[test]
+fn test_get_list_dir() {
+    let expected: Vec<String> = vec![
+        "./samples/aaa.001.tif".to_string(),
+        "./samples/aaa.002.tif".to_string(),
+        "./samples/aaa.003.tif".to_string(),
+        "./samples/aaa.004.tif".to_string(),
+        "./samples/aaa.005.tif".to_string(),
+        "./samples/bbb.001.exr".to_string(),
+    ];
+    assert_eq!(expected, get_list_dir("./samples"));
+}
+#[test]
+fn test_get_glob() {
+    let expected: Vec<String> = vec![
+        "samples/aaa.001.tif".to_string(),
+        "samples/aaa.002.tif".to_string(),
+        "samples/aaa.003.tif".to_string(),
+        "samples/aaa.004.tif".to_string(),
+        "samples/aaa.005.tif".to_string(),
+    ];
+    assert_eq!(expected, get_glob("./samples/*.tif"));
+}
