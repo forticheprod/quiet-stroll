@@ -4,7 +4,6 @@ version = "0.3.2"
 edition = "2021"
 authors = ["Philippe Llerena"]
 readme = "README.md"
-license = "MIT"
 license-file = "LICENSE"
 documentation = "https://github.com/doubleailes/quiet-stroll/blob/main/README.md"
 repository = "https://github.com/doubleailes/quiet-stroll"
