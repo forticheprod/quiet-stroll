@@ -16,7 +16,26 @@ This repository is intend to create a POC of using rust to deliver client/server
 
 ## Installation
 
-## Before running
+`caro install quiet-stroll`
+
+## Usage
+
+Quiet Stroll is based under [rocket](https://rocket.rs) framework
+
+### Testing
+
+#### Hello World
+
+By default you will see `Hello, world!` by visiting <http://localhost:8000>.
+
+#### Coffee: HTCPCP
+
+You can test error code with the [Hyper Text Coffee Pot Control Protocol](https://en.wikipedia.org/wiki/Hyper_Text_Coffee_Pot_Control_Protocol)
+by visiting <http://localhost:8000/coffee> and not `coffe`
+
+## Documentation
+
+You can see the swagger documentation by visiting <http://localhost:8000/docs>
 
 ## License
 
