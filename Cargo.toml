@@ -2,7 +2,7 @@
 name = "quiet-stroll"
 version = "0.3.4"
 edition = "2021"
-authors = ["Philippe Llerena"]
+authors = ["Philippe Llerena<philippe.llerena@gmail.com>"]
 description = "A web sever to deliver basic File System informations"
 readme = "README.md"
 license-file = "LICENSE"
