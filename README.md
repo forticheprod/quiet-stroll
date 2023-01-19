@@ -16,7 +16,7 @@ This repository is intend to create a POC of using rust to deliver client/server
 
 ## Installation
 
-`caro install quiet-stroll`
+`cargo install quiet-stroll`
 
 ## Usage
 
