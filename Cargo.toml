@@ -13,13 +13,13 @@ repository = "https://github.com/doubleailes/quiet-stroll"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jwalk = "0.5"
+jwalk = "0.8.1"
 serde_json = "1.0.91"
 glob = "0.3.1"
 schemars = "0.7"
 
 [dependencies.rocket]
-version = "0.5.0-rc.2"
+version = "0.5.0-rc.3"
 features = ["json"]
 
 [dependencies.rocket_okapi]
