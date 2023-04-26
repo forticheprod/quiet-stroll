@@ -1,6 +1,6 @@
 [package]
 name = "quiet-stroll"
-version = "0.3.6"
+version = "0.3.7"
 edition = "2021"
 authors = ["Philippe Llerena<philippe.llerena@gmail.com>"]
 description = "A web server to deliver basic File System informations"
@@ -16,10 +16,10 @@ repository = "https://github.com/doubleailes/quiet-stroll"
 jwalk = "0.8.1"
 serde_json = "1.0.91"
 glob = "0.3.1"
-schemars = "0.7"
+schemars = "0.8.10"
 
 [dependencies.rocket]
-version = "0.5.0-rc.3"
+version = "0.5.0-rc.2"
 features = ["json"]
 
 [dependencies.rocket_okapi]
