@@ -19,9 +19,9 @@ glob = "0.3.1"
 schemars = "0.8.10"
 
 [dependencies.rocket]
-version = "0.5.0-rc.2"
+version = "0.5.0-rc.3"
 features = ["json"]
 
 [dependencies.rocket_okapi]
-version = "0.8.0-rc.2"
+version = "0.8.0-rc.3"
 features = ["swagger"]
