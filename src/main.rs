@@ -1,4 +1,4 @@
-mod utils;
+use quiet_stroll;
 #[macro_use]
 extern crate rocket;
 use rocket::http::Status;
@@ -22,17 +22,17 @@ struct Paths {
 impl Paths {
     pub fn from_listdir(input_path: Json<InputPath>) -> Paths {
         Paths {
-            paths_list: utils::get_list_dir(input_path.input_path.as_str()),
+            paths_list: quiet_stroll::get_list_dir(input_path.input_path.as_str()),
         }
     }
     pub fn from_glob(input_path: Json<InputPath>) -> Paths {
         Paths {
-            paths_list: utils::get_glob(input_path.input_path.as_str()),
+            paths_list: quiet_stroll::get_glob(input_path.input_path.as_str()),
         }
     }
     pub fn from_walk(input_path: Json<InputPath>) -> Paths {
         Paths {
-            paths_list: utils::get_walk(input_path.input_path.as_str()),
+            paths_list: quiet_stroll::get_walk(input_path.input_path.as_str()),
         }
     }
 }
