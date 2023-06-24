@@ -37,3 +37,15 @@ fn test_get_glob() {
     assert_eq!(5, get_glob("./samples/*.tif").len());
     assert_eq!(3, get_glob("./samples/aaa.00[1-3].tif").len());
 }
+
+pub fn from_slash(s: String) -> String {
+    let temp_str = str::replace(&s, "\\\\", "\\");
+    str::replace(&temp_str, "\\", "/")
+}
+#[test]
+fn test_from_slash() {
+    assert_eq!(
+        "/caroline/bank/",
+        from_slash("\\\\caroline\\bank\\".to_string())
+    )
+}
