@@ -1,6 +1,10 @@
 use glob::glob;
 use jwalk::WalkDir;
+use rocket::serde::{json::Json, Deserialize, Serialize};
+use rocket_okapi::okapi::schemars;
+use rocket_okapi::okapi::schemars::JsonSchema;
 use std::fs;
+
 pub fn get_walk(input_path: &str) -> Vec<String> {
     WalkDir::new(input_path)
         .into_iter()
@@ -48,4 +52,33 @@ fn test_from_slash() {
         "/caroline/bank/",
         from_slash("\\\\caroline\\bank\\".to_string())
     )
+}
+
+#[derive(Deserialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+pub struct InputPath {
+    input_path: String,
+}
+#[derive(Serialize, JsonSchema)]
+#[serde(crate = "rocket::serde")]
+pub struct Paths {
+    paths_list: Vec<String>,
+}
+
+impl Paths {
+    pub fn from_listdir(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            paths_list: get_list_dir(input_path.input_path.as_str()),
+        }
+    }
+    pub fn from_glob(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            paths_list: get_glob(input_path.input_path.as_str()),
+        }
+    }
+    pub fn from_walk(input_path: Json<InputPath>) -> Paths {
+        Paths {
+            paths_list: get_walk(input_path.input_path.as_str()),
+        }
+    }
 }

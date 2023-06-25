@@ -1,41 +1,12 @@
 use quiet_stroll;
 #[macro_use]
 extern crate rocket;
+use quiet_stroll::{InputPath, Paths};
 use rocket::http::Status;
 use rocket::response::{content, status};
-use rocket::serde::{json::Json, Deserialize, Serialize};
-use rocket_okapi::okapi::schemars;
-use rocket_okapi::okapi::schemars::JsonSchema;
+use rocket::serde::json::Json;
 use rocket_okapi::{openapi, openapi_get_routes, swagger_ui::*};
 
-#[derive(Deserialize, JsonSchema)]
-#[serde(crate = "rocket::serde")]
-struct InputPath {
-    input_path: String,
-}
-#[derive(Serialize, JsonSchema)]
-#[serde(crate = "rocket::serde")]
-struct Paths {
-    paths_list: Vec<String>,
-}
-
-impl Paths {
-    pub fn from_listdir(input_path: Json<InputPath>) -> Paths {
-        Paths {
-            paths_list: quiet_stroll::get_list_dir(input_path.input_path.as_str()),
-        }
-    }
-    pub fn from_glob(input_path: Json<InputPath>) -> Paths {
-        Paths {
-            paths_list: quiet_stroll::get_glob(input_path.input_path.as_str()),
-        }
-    }
-    pub fn from_walk(input_path: Json<InputPath>) -> Paths {
-        Paths {
-            paths_list: quiet_stroll::get_walk(input_path.input_path.as_str()),
-        }
-    }
-}
 #[openapi(tag = "Default")]
 #[get("/")]
 fn index() -> &'static str {
