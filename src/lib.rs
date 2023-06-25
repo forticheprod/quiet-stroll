@@ -54,10 +54,15 @@ fn test_from_slash() {
     )
 }
 
-#[derive(Deserialize, JsonSchema)]
+#[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct InputPath {
     input_path: String,
+}
+impl InputPath {
+    pub fn new(s: String) -> InputPath {
+        InputPath { input_path: s }
+    }
 }
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]

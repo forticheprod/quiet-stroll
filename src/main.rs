@@ -1,4 +1,3 @@
-use quiet_stroll;
 #[macro_use]
 extern crate rocket;
 use quiet_stroll::{InputPath, Paths};
@@ -33,9 +32,9 @@ fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_walk(input_path))
 }
 
-#[rocket::main]
-async fn main() {
-    let launch_result = rocket::build()
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
         .mount(
             "/",
             openapi_get_routes![index, flistdir, fglob, fwalk, coffee],
@@ -47,10 +46,36 @@ async fn main() {
                 ..Default::default()
             }),
         )
-        .launch()
-        .await;
-    match launch_result {
-        Ok(_) => println!("Rocket shut down gracefully."),
-        Err(err) => println!("Rocket had an error: {}", err),
-    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use quiet_stroll::InputPath;
+    use rocket::http::Status;
+    use rocket::local::blocking::Client;
+
+    #[test]
+    fn hello_world() {
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.get(uri!(super::index)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.into_string().unwrap(), "Hello, world!");
+    }
+    #[test]
+    fn test_walk() {
+        let message = InputPath::new("./samples".to_string());
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.post("/walk").json(&message).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.into_string().unwrap(), "{\"paths_list\":[\".\\\\samples\",\"./samples\\\\aaa.001.tif\",\"./samples\\\\aaa.002.tif\",\"./samples\\\\aaa.003.tif\",\"./samples\\\\aaa.004.tif\",\"./samples\\\\aaa.005.tif\",\"./samples\\\\bbb.001.exr\",\"./samples\\\\subfolder\",\"./samples\\\\subfolder\\\\ccc.050.exr\"]}");
+    }
+    #[test]
+    fn test_glob() {
+        let message = InputPath::new("./samples/*.tif".to_string());
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.post("/glob").json(&message).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.into_string().unwrap(), "{\"paths_list\":[\"samples\\\\aaa.001.tif\",\"samples\\\\aaa.002.tif\",\"samples\\\\aaa.003.tif\",\"samples\\\\aaa.004.tif\",\"samples\\\\aaa.005.tif\"]}");
+    }
 }
