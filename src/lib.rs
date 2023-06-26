@@ -20,11 +20,13 @@ fn test_get_walk() {
 }
 
 pub fn get_list_dir(input_path: &str) -> Vec<String> {
-    fs::read_dir(input_path)
+    let mut dir_list: Vec<String> = fs::read_dir(input_path)
         .unwrap()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
         .collect()
+    dir_list.sort();
+    dir_list
 }
 #[test]
 fn test_get_list_dir() {
