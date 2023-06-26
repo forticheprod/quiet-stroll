@@ -19,6 +19,11 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
 #[openapi(tag = "FileSystem")]
+#[post("/walk", format = "application/json", data = "<input_path>")]
+fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
+    Json(Paths::from_walk(input_path))
+}
+#[openapi(tag = "FileSystem")]
 #[post("/listdir", format = "application/json", data = "<input_path>")]
 fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_listdir(input_path))
@@ -27,11 +32,6 @@ fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
 #[post("/glob", format = "application/json", data = "<input_path>")]
 fn fglob(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_glob(input_path))
-}
-#[openapi(tag = "FileSystem")]
-#[post("/walk", format = "application/json", data = "<input_path>")]
-fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths::from_walk(input_path))
 }
 
 #[launch]
