@@ -24,7 +24,7 @@ pub fn get_list_dir(input_path: &str) -> Vec<String> {
         .unwrap()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
-        .collect()
+        .collect();
     dir_list.sort();
     dir_list
 }
