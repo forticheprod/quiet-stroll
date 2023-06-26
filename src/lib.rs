@@ -6,11 +6,13 @@ use rocket_okapi::okapi::schemars::JsonSchema;
 use std::fs;
 
 pub fn get_walk(input_path: &str) -> Vec<String> {
-    WalkDir::new(input_path)
+    let mut walk_list: Vec<String> = WalkDir::new(input_path)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
-        .collect()
+        .collect();
+    walk_list.sort();
+    walk_list
 }
 #[test]
 fn test_get_walk() {
@@ -54,10 +56,15 @@ fn test_from_slash() {
     )
 }
 
-#[derive(Deserialize, JsonSchema)]
+#[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct InputPath {
     input_path: String,
+}
+impl InputPath {
+    pub fn new(s: String) -> InputPath {
+        InputPath { input_path: s }
+    }
 }
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
