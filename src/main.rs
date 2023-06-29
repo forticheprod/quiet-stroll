@@ -3,7 +3,7 @@
 //! ## Decription
 //!
 //! This repository is intend to create a POC of using rust to deliver client/server FS tools to:
-//! 
+//!
 //! - **walk**, crawl the file system from an entrypoint in the file tree
 //! - **listdir**, simply list the files in a directory
 //! - **glob**, use glob
@@ -30,16 +30,43 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
 }
 #[openapi(tag = "FileSystem")]
 #[post("/walk", format = "application/json", data = "<input_path>")]
+/// # walk
+///
+/// ## Description
+///
+/// Walk the directories from the entrypoint and return a Json of the paths
+///
+/// ## Tips
+///
+/// It is recommanded to use path with slash `/` instead of backslash `\`
 fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_walk(input_path))
 }
 #[openapi(tag = "FileSystem")]
 #[post("/listdir", format = "application/json", data = "<input_path>")]
+/// # listdir
+///
+/// ## Description
+///
+/// List the files and directory and return a Json of the paths
+///
+/// ## Tips
+///
+/// It is recommanded to use path with slash `/` instead of backslash `\`
 fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_listdir(input_path))
 }
 #[openapi(tag = "FileSystem")]
 #[post("/glob", format = "application/json", data = "<input_path>")]
+/// # glob
+///
+/// ## Description
+///
+/// Use a glob pattern to return a Json of the paths
+///
+/// ## Tips
+///
+/// It is recommanded to use path with slash `/` instead of backslash `\`
 fn fglob(input_path: Json<InputPath>) -> Json<Paths> {
     Json(Paths::from_glob(input_path))
 }
