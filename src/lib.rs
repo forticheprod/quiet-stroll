@@ -7,6 +7,7 @@ use std::fs;
 
 /// get_walk is a function to walk the content of a directory and his
 /// subfolders
+/// The result is sorted to be consistant trough the os
 pub fn get_walk(input_path: &str) -> Vec<String> {
     let mut walk_list: Vec<String> = WalkDir::new(input_path)
         .into_iter()
@@ -21,6 +22,7 @@ fn test_get_walk() {
     assert_eq!(9, get_walk("./samples/").len());
 }
 /// get_list_dir is a function to list the content of a directory
+/// The result is sorted to be consistant trough the os
 pub fn get_list_dir(input_path: &str) -> Vec<String> {
     let mut dir_list: Vec<String> = fs::read_dir(input_path)
         .unwrap()
@@ -63,7 +65,7 @@ fn test_from_slash() {
 
 #[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
-/// InputPath is a simple struct to represent an input path
+/// InputPath is a simple struct to represent an input_path
 pub struct InputPath {
     input_path: String,
 }
