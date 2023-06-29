@@ -67,9 +67,9 @@ fn test_from_slash() {
 pub struct InputPath {
     input_path: String,
 }
-/// This function create a new InputPath based on a String
-/// Mainly create for testing purpose
 impl InputPath {
+    /// This function create a new InputPath based on a String
+    /// Mainly create for testing purpose
     pub fn new(s: String) -> InputPath {
         InputPath { input_path: s }
     }
