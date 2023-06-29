@@ -1,3 +1,13 @@
+//! # quiet-stroll
+//!
+//! ## Decription
+//!
+//! This repository is intend to create a POC of using rust to deliver client/server FS tools to:
+//! 
+//! - **walk**, crawl the file system from an entrypoint in the file tree
+//! - **listdir**, simply list the files in a directory
+//! - **glob**, use glob
+//!
 #[macro_use]
 extern crate rocket;
 use quiet_stroll::{InputPath, Paths};
