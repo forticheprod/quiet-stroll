@@ -58,6 +58,11 @@ impl InputPath {
     pub fn new(s: String) -> InputPath {
         InputPath { input_path: s }
     }
+    pub fn convert_to_unix(input: InputPath) -> InputPath {
+        InputPath {
+            input_path: from_slash(input.input_path),
+        }
+    }
 }
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
