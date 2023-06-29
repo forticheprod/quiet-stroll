@@ -53,15 +53,17 @@ pub struct InputPath {
     input_path: String,
 }
 impl InputPath {
-    /// This function create a new InputPath based on a String
+    /// Create a new InputPath based on a String
     /// Mainly create for testing purpose
     pub fn new(s: String) -> InputPath {
         InputPath { input_path: s }
     }
-    pub fn convert_to_unix(input: InputPath) -> InputPath {
-        InputPath {
-            input_path: from_slash(input.input_path),
-        }
+    /// convert an InputPath in Windows format to a linux format
+    pub fn convert_to_unix(input: Json<InputPath>) -> Json<InputPath> {
+        let path = InputPath {
+            input_path: from_slash(input.input_path.to_string()),
+        };
+        Json::from(path)
     }
 }
 #[derive(Serialize, JsonSchema)]
