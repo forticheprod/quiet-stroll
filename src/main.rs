@@ -25,6 +25,13 @@ fn index() -> &'static str {
 }
 #[openapi(tag = "Fun")]
 #[get("/coffee")]
+/// # coffee
+///
+/// ## Description
+///
+/// Coffee is a fun function to use
+///  [HTCPCP](https://en.wikipedia.org/wiki/Hyper_Text_Coffee_Pot_Control_Protocol)
+/// and generate a error 418
 fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
