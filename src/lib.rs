@@ -45,6 +45,19 @@ pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
         .map(|entry| entry.display().to_string())
         .collect())
 }
+///Basic function to translate a Windows path to Unix
+/// expecting a full path starting at a root level entry
+pub fn from_slash(s: String) -> String {
+    let temp_str = str::replace(&s, "\\\\", "\\");
+    str::replace(&temp_str, "\\", "/")
+}
+#[test]
+fn test_from_slash() {
+    assert_eq!(
+        "/caroline/bank/",
+        from_slash("\\\\caroline\\bank\\".to_string())
+    )
+}
 
 #[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
