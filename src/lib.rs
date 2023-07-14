@@ -9,13 +9,12 @@ use std::fs;
 /// subfolders
 /// The result is sorted to be consistant trough the os
 pub fn get_walk(input_path: &str) -> Vec<String> {
-    let mut walk_list: Vec<String> = WalkDir::new(input_path)
+        WalkDir::new(input_path)
+        .sort(true)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
         .collect();
-    walk_list.sort();
-    walk_list
 }
 #[test]
 fn test_get_walk() {
