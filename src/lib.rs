@@ -14,7 +14,7 @@ pub fn get_walk(input_path: &str) -> Vec<String> {
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|x| x.path().display().to_string())
-        .collect();
+        .collect()
 }
 #[test]
 fn test_get_walk() {
