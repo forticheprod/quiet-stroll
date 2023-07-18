@@ -10,7 +10,7 @@
 //!
 #[macro_use]
 extern crate rocket;
-use quiet_stroll::{InputPath, Paths};
+use quiet_stroll::{InputPath, QuietPaths};
 use rocket::http::Status;
 use rocket::response::{content, status};
 use rocket::serde::json::Json;
@@ -36,7 +36,7 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
 #[openapi(tag = "FileSystem")]
-#[post("/walk", format = "application/json", data = "<input_path>")]
+#[post("/walk?<packed>", format = "application/json", data = "<input_path>")]
 /// # walk
 ///
 /// ## Description
@@ -46,11 +46,26 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
 /// ## Tips
 ///
 /// It is recommanded to use path with slash `/` instead of backslash `\`
-fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths::from_walk(input_path))
+/// 
+/// ## Parameters
+/// 
+/// ### packed
+/// 
+/// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
+    let input_path: QuietPaths = QuietPaths::from_walk(input_path);
+    if packed.unwrap_or(false) {
+        Json(input_path.packed())
+    } else {
+        Json(input_path)
+    }
 }
 #[openapi(tag = "FileSystem")]
-#[post("/listdir", format = "application/json", data = "<input_path>")]
+#[post(
+    "/listdir?<packed>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # listdir
 ///
 /// ## Description
@@ -60,11 +75,22 @@ fn fwalk(input_path: Json<InputPath>) -> Json<Paths> {
 /// ## Tips
 ///
 /// It is recommanded to use path with slash `/` instead of backslash `\`
-fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths::from_listdir(input_path))
+///
+/// ## Parameters
+/// 
+/// ### packed
+/// 
+/// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
+    let input_path: QuietPaths = QuietPaths::from_listdir(input_path);
+    if packed.unwrap_or(false) {
+        Json(input_path.packed())
+    } else {
+        Json(input_path)
+    }
 }
 #[openapi(tag = "FileSystem")]
-#[post("/glob", format = "application/json", data = "<input_path>")]
+#[post("/glob?<packed>", format = "application/json", data = "<input_path>")]
 /// # glob
 ///
 /// ## Description
@@ -74,8 +100,19 @@ fn flistdir(input_path: Json<InputPath>) -> Json<Paths> {
 /// ## Tips
 ///
 /// It is recommanded to use path with slash `/` instead of backslash `\`
-fn fglob(input_path: Json<InputPath>) -> Json<Paths> {
-    Json(Paths::from_glob(input_path))
+///
+/// ## Parameters
+/// 
+/// ### packed
+/// 
+/// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+fn fglob(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
+    let input_path: QuietPaths = QuietPaths::from_glob(input_path);
+    if packed.unwrap_or(false) {
+        Json(input_path.packed())
+    } else {
+        Json(input_path)
+    }
 }
 
 #[launch]

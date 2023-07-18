@@ -1,3 +1,4 @@
+use framels::{basic_listing, paths::Paths};
 use glob::glob;
 use jwalk::WalkDir;
 use rocket::serde::{json::Json, Deserialize, Serialize};
@@ -9,7 +10,7 @@ use std::fs;
 /// subfolders
 /// The result is sorted to be consistant trough the os
 pub fn get_walk(input_path: &str) -> Vec<String> {
-        WalkDir::new(input_path)
+    WalkDir::new(input_path)
         .sort(true)
         .into_iter()
         .filter_map(|e| e.ok())
@@ -77,29 +78,40 @@ impl InputPath {
 }
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
-/// Paths is a simple struct to represent the output of the crate by
+/// QuietPaths is a simple struct to represent the output of the crate by
 /// getting a vector of strings
-pub struct Paths {
+pub struct QuietPaths {
     paths_list: Vec<String>,
 }
 
-impl Paths {
-    /// Create a Paths from a get_list_tdir function
-    pub fn from_listdir(input_path: Json<InputPath>) -> Paths {
-        Paths {
+impl QuietPaths {
+    /// Create a QuietPaths from a get_list_tdir function
+    pub fn from_listdir(input_path: Json<InputPath>) -> QuietPaths {
+        QuietPaths {
             paths_list: get_list_dir(input_path.input_path.as_str()),
         }
     }
-    /// Create a Paths from a get_glob function
-    pub fn from_glob(input_path: Json<InputPath>) -> Paths {
-        Paths {
+    /// Create a QuietPaths from a get_glob function
+    pub fn from_glob(input_path: Json<InputPath>) -> QuietPaths {
+        QuietPaths {
             paths_list: get_glob(input_path.input_path.as_str()),
         }
     }
-    /// Create a Paths from a get_walk function
-    pub fn from_walk(input_path: Json<InputPath>) -> Paths {
-        Paths {
+    /// Create a QuietPaths from a get_walk function
+    pub fn from_walk(input_path: Json<InputPath>) -> QuietPaths {
+        QuietPaths {
             paths_list: get_walk(input_path.input_path.as_str()),
         }
+    }
+    pub fn to_paths(&self) -> Paths {
+        Paths::new(self.paths_list.clone())
+    }
+    pub fn from_paths(paths: Paths) -> Self {
+        QuietPaths {
+            paths_list: paths.to_vec(),
+        }
+    }
+    pub fn packed(&self) -> Self {
+        QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
     }
 }
