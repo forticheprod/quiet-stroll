@@ -63,16 +63,16 @@ fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
 }
 #[openapi(tag = "FileSystem")]
 #[post("/walk/<n>", format = "application/json", data = "<input_path>")]
-fn fwalk_os(input_path: Json<InputPath>, n: String) -> Json<Paths> {
+fn fwalk_os(input_path: Json<InputPath>, n: String) -> Json<QuietPaths> {
     if n == "windows" {
         let path = InputPath::convert_to_unix(input_path);
-        Json(Paths::from_walk(path))
+        Json(QuietPaths::from_walk(path))
     } else {
-        Json(Paths::from_walk(input_path))
+        Json(QuietPaths::from_walk(input_path))
     }
 }
 #[openapi(tag = "FileSystem")]
-#[post("/listdir", format = "application/json", data = "<input_path>")]
+#[post("/listdir?<packed>", format = "application/json", data = "<input_path>")]
 /// # listdir
 ///
 /// ## Description
