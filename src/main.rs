@@ -36,8 +36,30 @@ fn index() -> &'static str {
 fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
+fn commun_manipulations(
+    input_paths: QuietPaths,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    let mut path_packed = if packed.unwrap_or(false) {
+        input_paths.packed()
+    } else {
+        input_paths
+    };
+    let path_windows = if windows.unwrap_or(false) {
+        path_packed.convert_windows();
+        path_packed
+    } else {
+        path_packed
+    };
+    Json(path_windows)
+}
 #[openapi(tag = "FileSystem")]
-#[post("/walk?<packed>", format = "application/json", data = "<input_path>")]
+#[post(
+    "/walk?<packed>&<windows>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # walk
 ///
 /// ## Description
@@ -62,17 +84,11 @@ fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
     }
 }
 #[openapi(tag = "FileSystem")]
-#[post("/walk/<n>", format = "application/json", data = "<input_path>")]
-fn fwalk_os(input_path: Json<InputPath>, n: String) -> Json<QuietPaths> {
-    if n == "windows" {
-        let path = InputPath::convert_to_unix(input_path);
-        Json(QuietPaths::from_walk(path))
-    } else {
-        Json(QuietPaths::from_walk(input_path))
-    }
-}
-#[openapi(tag = "FileSystem")]
-#[post("/listdir?<packed>", format = "application/json", data = "<input_path>")]
+#[post(
+    "/listdir?<packed>&<windows>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # listdir
 ///
 /// ## Description
@@ -98,7 +114,11 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 }
 
 #[openapi(tag = "FileSystem")]
-#[post("/glob?<packed>", format = "application/json", data = "<input_path>")]
+#[post(
+    "/glob?<packed>&<windows>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # glob
 ///
 /// ## Description
@@ -144,7 +164,7 @@ fn rocket() -> _ {
     rocket::build()
         .mount(
             "/",
-            openapi_get_routes![index, flistdir, fglob, fwalk, fwalk_os, coffee],
+            openapi_get_routes![index, flistdir, fglob, fwalk, coffee],
         )
         .mount(
             "/docs/",
