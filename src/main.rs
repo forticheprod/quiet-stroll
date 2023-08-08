@@ -46,11 +46,11 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
 /// ## Tips
 ///
 /// It is recommanded to use path with slash `/` instead of backslash `\`
-/// 
+///
 /// ## Parameters
-/// 
+///
 /// ### packed
-/// 
+///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
 fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
     let input_path: QuietPaths = QuietPaths::from_walk(input_path);
@@ -77,9 +77,9 @@ fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
 /// It is recommanded to use path with slash `/` instead of backslash `\`
 ///
 /// ## Parameters
-/// 
+///
 /// ### packed
-/// 
+///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
 fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
     let input_path: QuietPaths = QuietPaths::from_listdir(input_path);
@@ -89,6 +89,7 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
         Json(input_path)
     }
 }
+
 #[openapi(tag = "FileSystem")]
 #[post("/glob?<packed>", format = "application/json", data = "<input_path>")]
 /// # glob
@@ -102,17 +103,28 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 /// It is recommanded to use path with slash `/` instead of backslash `\`
 ///
 /// ## Parameters
-/// 
+///
 /// ### packed
-/// 
+///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
 fn fglob(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let input_path: QuietPaths = QuietPaths::from_glob(input_path);
-    if packed.unwrap_or(false) {
-        Json(input_path.packed())
-    } else {
-        Json(input_path)
-    }
+    let quiet_path:QuietPaths = match QuietPaths::from_glob(input_path) {
+        Ok(val) =>if packed.unwrap_or(false) {
+            val.packed()
+        } else {
+            val
+        },
+        Err(err) => QuietPaths::from_string(format!("{}",err))
+    };
+    Json(quiet_path)
+}
+
+#[catch(404)]
+fn general_not_found() -> content::RawHtml<&'static str> {
+    content::RawHtml(r#"
+        <p>Hmm... What are you looking for?</p>
+        Say <a href="/hello/Sergio/100">hello!</a>
+    "#)
 }
 
 #[launch]
@@ -129,4 +141,5 @@ fn rocket() -> _ {
                 ..Default::default()
             }),
         )
+        .register("/", catchers![general_not_found])
 }

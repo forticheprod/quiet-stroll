@@ -33,7 +33,10 @@ fn test_listdir() {
 fn test_listdir_packed() {
     let message = InputPath::new("./samples/".to_string());
     let client = Client::tracked(rocket()).expect("valid rocket instance");
-    let response = client.post("/listdir?packed=true").json(&message).dispatch();
+    let response = client
+        .post("/listdir?packed=true")
+        .json(&message)
+        .dispatch();
     assert_eq!(response.status(), Status::Ok);
     assert_eq!(response.into_string().unwrap().replace("\\\\", "/"),"{\"paths_list\":[\"./samples/aaa.***.tif@1-5\",\"./samples/bbb.***.exr@1\",\"./samples/subfolder\"]}");
 }
@@ -45,4 +48,13 @@ fn test_glob() {
     let response = client.post("/glob").json(&message).dispatch();
     assert_eq!(response.status(), Status::Ok);
     assert_eq!(response.into_string().unwrap().replace("\\\\", "/"),"{\"paths_list\":[\"samples/aaa.001.tif\",\"samples/aaa.002.tif\",\"samples/aaa.003.tif\",\"samples/aaa.004.tif\",\"samples/aaa.005.tif\"]}");
+}
+/// Test the recursive wildcards
+#[test]
+fn test_recursive_glob() {
+    let message = InputPath::new("./samples/aaa**.tif".to_string().to_string());
+    let client = Client::tracked(rocket()).expect("valid rocket instance");
+    let response = client.post("/glob").json(&message).dispatch();
+    assert_eq!(response.status(), Status::InternalServerError);
+    assert_eq!(response.into_string().unwrap(), "Internal Error");
 }

@@ -1,4 +1,5 @@
 use framels::{basic_listing, paths::Paths};
+use glob::PatternError;
 use glob::glob;
 use jwalk::WalkDir;
 use rocket::serde::{json::Json, Deserialize, Serialize};
@@ -37,18 +38,18 @@ fn test_get_list_dir() {
     assert_eq!(7, get_list_dir("./samples").len());
 }
 /// get_glob is a function to glob the content of a directory
-pub fn get_glob(input_path: &str) -> Vec<String> {
-    glob(input_path)
-        .unwrap()
+pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
+    let paths = glob(input_path)?;
+    Ok(paths
         .filter_map(|e| e.ok())
         .map(|x| x.display().to_string())
-        .collect()
+        .collect::<Vec<String>>())
 }
 
 #[test]
 fn test_get_glob() {
-    assert_eq!(5, get_glob("./samples/*.tif").len());
-    assert_eq!(3, get_glob("./samples/aaa.00[1-3].tif").len());
+    assert_eq!(5, get_glob("./samples/*.tif").unwrap().len());
+    assert_eq!(3, get_glob("./samples/aaa.00[1-3].tif").unwrap().len());
 }
 ///Basic function to translate a Windows path to Unix
 pub fn from_slash(s: String) -> String {
@@ -86,19 +87,19 @@ pub struct QuietPaths {
 
 impl QuietPaths {
     /// Create a QuietPaths from a get_list_tdir function
-    pub fn from_listdir(input_path: Json<InputPath>) -> QuietPaths {
+    pub fn from_listdir(input_path: Json<InputPath>) -> Self {
         QuietPaths {
             paths_list: get_list_dir(input_path.input_path.as_str()),
         }
     }
     /// Create a QuietPaths from a get_glob function
-    pub fn from_glob(input_path: Json<InputPath>) -> QuietPaths {
-        QuietPaths {
-            paths_list: get_glob(input_path.input_path.as_str()),
-        }
+    pub fn from_glob(input_path: Json<InputPath>) -> Result<Self, PatternError> {
+        Ok(QuietPaths {
+            paths_list: get_glob(input_path.input_path.as_str())?,
+        })
     }
     /// Create a QuietPaths from a get_walk function
-    pub fn from_walk(input_path: Json<InputPath>) -> QuietPaths {
+    pub fn from_walk(input_path: Json<InputPath>) -> Self {
         QuietPaths {
             paths_list: get_walk(input_path.input_path.as_str()),
         }
@@ -113,5 +114,8 @@ impl QuietPaths {
     }
     pub fn packed(&self) -> Self {
         QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
+    }
+    pub fn from_string(s: String)->Self{
+        QuietPaths { paths_list: vec![s] }
     }
 }
