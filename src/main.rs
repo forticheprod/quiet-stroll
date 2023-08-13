@@ -107,6 +107,11 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+/// 
+/// ### Error
+/// 
+/// If you use wrongly a pattern. It will retur the error message from as a
+/// paylod
 fn fglob(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
     let quiet_path:QuietPaths = match QuietPaths::from_glob(input_path) {
         Ok(val) =>if packed.unwrap_or(false) {
