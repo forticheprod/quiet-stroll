@@ -37,7 +37,8 @@ pub fn get_list_dir(input_path: &str) -> Vec<String> {
 fn test_get_list_dir() {
     assert_eq!(7, get_list_dir("./samples").len());
 }
-/// get_glob is a function to glob the content of a directory
+/// get_glob is a function to glob the content of a directory. Return
+/// an error pattern if the pattern can't be used by glod lib
 pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
     let paths = glob(input_path)?;
     Ok(paths
@@ -92,7 +93,9 @@ impl QuietPaths {
             paths_list: get_list_dir(input_path.input_path.as_str()),
         }
     }
-    /// Create a QuietPaths from a get_glob function
+    /// Create a QuietPaths from a get_glob function can return a error if
+    /// if the pattern is not supported by glob lib like double wild card in
+    /// the middle of a path
     pub fn from_glob(input_path: Json<InputPath>) -> Result<Self, PatternError> {
         Ok(QuietPaths {
             paths_list: get_glob(input_path.input_path.as_str())?,
