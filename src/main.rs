@@ -119,14 +119,6 @@ fn fglob(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
     Json(quiet_path)
 }
 
-#[catch(404)]
-fn general_not_found() -> content::RawHtml<&'static str> {
-    content::RawHtml(r#"
-        <p>Hmm... What are you looking for?</p>
-        Say <a href="/hello/Sergio/100">hello!</a>
-    "#)
-}
-
 #[launch]
 fn rocket() -> _ {
     rocket::build()
@@ -141,5 +133,4 @@ fn rocket() -> _ {
                 ..Default::default()
             }),
         )
-        .register("/", catchers![general_not_found])
 }
