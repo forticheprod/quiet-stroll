@@ -75,13 +75,12 @@ fn commun_manipulations(
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
-fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let input_path: QuietPaths = QuietPaths::from_walk(input_path);
-    if packed.unwrap_or(false) {
-        Json(input_path.packed())
-    } else {
-        Json(input_path)
-    }
+fn fwalk(
+    input_path: Json<InputPath>,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    commun_manipulations(QuietPaths::from_walk(input_path), packed, windows)
 }
 #[openapi(tag = "FileSystem")]
 #[post(
@@ -104,13 +103,12 @@ fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
-fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let input_path: QuietPaths = QuietPaths::from_listdir(input_path);
-    if packed.unwrap_or(false) {
-        Json(input_path.packed())
-    } else {
-        Json(input_path)
-    }
+fn flistdir(
+    input_path: Json<InputPath>,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    commun_manipulations(QuietPaths::from_listdir(input_path), packed, windows)
 }
 
 #[openapi(tag = "FileSystem")]
@@ -142,15 +140,10 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 fn fglob(
     input_path: Json<InputPath>,
     packed: Option<bool>,
+    windows: Option<bool>,
 ) -> Result<Json<QuietPaths>, Custom<String>> {
     match QuietPaths::from_glob(input_path) {
-        Ok(val) => {
-            if packed.unwrap_or(false) {
-                Ok(Json(val.packed()))
-            } else {
-                Ok(Json(val))
-            }
-        }
+        Ok(val) => Ok(commun_manipulations(val, packed, windows)),
         Err(err) => {
             // Construct a 400 Bad Request response with the error message
             let response = Custom(Status::BadRequest, format!("Error: {}", err));
