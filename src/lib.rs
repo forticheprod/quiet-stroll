@@ -31,9 +31,8 @@ pub fn get_walk(input_path: &str) -> Vec<String> {
 }
 
 pub fn get_list_dir(input_path: &str) -> Vec<String> {
-    let mut dir_list = common_file_operation(input_path, |entry| {
-        entry.path().display().to_string()
-    });
+    let mut dir_list =
+        common_file_operation(input_path, |entry| entry.path().display().to_string());
     dir_list.sort();
     dir_list
 }
