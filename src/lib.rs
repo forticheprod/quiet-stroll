@@ -1,11 +1,14 @@
 use framels::{basic_listing, paths::Paths};
-use glob::PatternError;
 use glob::glob;
+use glob::PatternError;
+use jwalk::rayon::prelude::IntoParallelRefIterator;
+use jwalk::rayon::prelude::ParallelIterator;
 use jwalk::WalkDir;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket_okapi::okapi::schemars;
 use rocket_okapi::okapi::schemars::JsonSchema;
 use std::fs;
+use std::path::PathBuf;
 
 /// get_walk is a function to walk the content of a directory and his
 /// subfolders
@@ -108,17 +111,28 @@ impl QuietPaths {
         }
     }
     pub fn to_paths(&self) -> Paths {
-        Paths::new(self.paths_list.clone())
+        let data: Vec<PathBuf> = self
+            .paths_list
+            .par_iter()
+            .map(|x| PathBuf::from(x))
+            .collect::<Vec<PathBuf>>();
+        Paths::new(data)
     }
     pub fn from_paths(paths: Paths) -> Self {
+        let paths_list: Vec<String> = paths
+            .par_iter()
+            .map(|f| f.to_string_lossy().into_owned())
+            .collect::<Vec<String>>();
         QuietPaths {
-            paths_list: paths.to_vec(),
+            paths_list: paths_list,
         }
     }
     pub fn packed(&self) -> Self {
         QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
     }
-    pub fn from_string(s: String)->Self{
-        QuietPaths { paths_list: vec![s] }
+    pub fn from_string(s: String) -> Self {
+        QuietPaths {
+            paths_list: vec![s],
+        }
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "quiet-stroll"
-version = "1.0.0-rc.6"
+version = "1.0.0-rc.7"
 edition = "2021"
 authors = ["Philippe Llerena<philippe.llerena@gmail.com>"]
 description = "A web server to deliver basic File System informations"
@@ -17,7 +17,7 @@ jwalk = "0.8.1"
 serde_json = "1.0.91"
 glob = "0.3.1"
 schemars = "0.8.10"
-framels = "0.4.0-rc.3"
+framels = "0.4.0"
 
 [dependencies.rocket]
 version = "0.5.0-rc.3"

@@ -12,6 +12,7 @@
 extern crate rocket;
 use quiet_stroll::{InputPath, QuietPaths};
 use rocket::http::Status;
+use rocket::response::status::Custom;
 use rocket::response::{content, status};
 use rocket::serde::json::Json;
 use rocket_okapi::{openapi, openapi_get_routes, swagger_ui::*};
@@ -107,21 +108,29 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
-/// 
+///
 /// ### Error
-/// 
+///
 /// If you use wrongly a pattern. It will retur the error message from as a
 /// paylod
-fn fglob(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let quiet_path:QuietPaths = match QuietPaths::from_glob(input_path) {
-        Ok(val) =>if packed.unwrap_or(false) {
-            val.packed()
-        } else {
-            val
-        },
-        Err(err) => QuietPaths::from_string(format!("{}",err))
-    };
-    Json(quiet_path)
+fn fglob(
+    input_path: Json<InputPath>,
+    packed: Option<bool>,
+) -> Result<Json<QuietPaths>, Custom<String>> {
+    match QuietPaths::from_glob(input_path) {
+        Ok(val) => {
+            if packed.unwrap_or(false) {
+                Ok(Json(val.packed()))
+            } else {
+                Ok(Json(val))
+            }
+        }
+        Err(err) => {
+            // Construct a 400 Bad Request response with the error message
+            let response = Custom(Status::BadRequest, format!("Error: {}", err));
+            Err(response)
+        }
+    }
 }
 
 #[launch]
