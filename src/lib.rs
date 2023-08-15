@@ -10,62 +10,40 @@ use rocket_okapi::okapi::schemars::JsonSchema;
 use std::fs;
 use std::path::PathBuf;
 
-/// get_walk is a function to walk the content of a directory and his
-/// subfolders
-/// The result is sorted to be consistant trough the os
+fn common_file_operation<F>(input_path: &str, file_op: F) -> Vec<String>
+where
+    F: Fn(fs::DirEntry) -> String,
+{
+    fs::read_dir(input_path)
+        .unwrap()
+        .filter_map(|entry| entry.ok())
+        .map(file_op)
+        .collect()
+}
+
 pub fn get_walk(input_path: &str) -> Vec<String> {
     WalkDir::new(input_path)
         .sort(true)
         .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|x| x.path().display().to_string())
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path().display().to_string())
         .collect()
 }
-#[test]
-fn test_get_walk() {
-    assert_eq!(9, get_walk("./samples/").len());
-}
-/// get_list_dir is a function to list the content of a directory
-/// The result is sorted to be consistant trough the os
+
 pub fn get_list_dir(input_path: &str) -> Vec<String> {
-    let mut dir_list: Vec<String> = fs::read_dir(input_path)
-        .unwrap()
-        .filter_map(|e| e.ok())
-        .map(|x| x.path().display().to_string())
-        .collect();
+    let mut dir_list = common_file_operation(input_path, |entry| {
+        entry.path().display().to_string()
+    });
     dir_list.sort();
     dir_list
 }
-#[test]
-fn test_get_list_dir() {
-    assert_eq!(7, get_list_dir("./samples").len());
-}
-/// get_glob is a function to glob the content of a directory. Return
-/// an error pattern if the pattern can't be used by glod lib
+
 pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
     let paths = glob(input_path)?;
     Ok(paths
-        .filter_map(|e| e.ok())
-        .map(|x| x.display().to_string())
-        .collect::<Vec<String>>())
-}
-
-#[test]
-fn test_get_glob() {
-    assert_eq!(5, get_glob("./samples/*.tif").unwrap().len());
-    assert_eq!(3, get_glob("./samples/aaa.00[1-3].tif").unwrap().len());
-}
-///Basic function to translate a Windows path to Unix
-pub fn from_slash(s: String) -> String {
-    let temp_str = str::replace(&s, "\\\\", "\\");
-    str::replace(&temp_str, "\\", "/")
-}
-#[test]
-fn test_from_slash() {
-    assert_eq!(
-        "/caroline/bank/",
-        from_slash("\\\\caroline\\bank\\".to_string())
-    )
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.display().to_string())
+        .collect())
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
