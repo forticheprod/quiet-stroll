@@ -16,6 +16,7 @@ use rocket::response::status::Custom;
 use rocket::response::{content, status};
 use rocket::serde::json::Json;
 use rocket_okapi::{openapi, openapi_get_routes, swagger_ui::*};
+use std::env;
 #[cfg(test)]
 mod tests;
 
@@ -24,6 +25,17 @@ mod tests;
 fn index() -> &'static str {
     "Hello, world!"
 }
+#[openapi(tag = "Default")]
+#[get("/os")]
+/// # os
+/// 
+/// ## Description
+/// 
+/// Get the current os of the service, really helpful to path formating
+fn get_os() -> &'static str {
+    env::consts::OS
+}
+
 #[openapi(tag = "Fun")]
 #[get("/coffee")]
 /// # coffee
@@ -138,7 +150,7 @@ fn rocket() -> _ {
     rocket::build()
         .mount(
             "/",
-            openapi_get_routes![index, flistdir, fglob, fwalk, coffee],
+            openapi_get_routes![index, flistdir, fglob, fwalk, coffee, get_os],
         )
         .mount(
             "/docs/",
