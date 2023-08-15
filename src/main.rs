@@ -75,6 +75,10 @@ fn commun_manipulations(
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
 fn fwalk(
     input_path: Json<InputPath>,
     packed: Option<bool>,
@@ -103,6 +107,10 @@ fn fwalk(
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
 fn flistdir(
     input_path: Json<InputPath>,
     packed: Option<bool>,
@@ -132,6 +140,10 @@ fn flistdir(
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
 ///
 /// ### Error
 ///
