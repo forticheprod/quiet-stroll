@@ -52,10 +52,23 @@ pub struct InputPath {
     input_path: String,
 }
 impl InputPath {
-    /// This function create a new InputPath based on a String
+    /// Create a new InputPath based on a String
     /// Mainly create for testing purpose
     pub fn new(s: String) -> InputPath {
         InputPath { input_path: s }
+    }
+    ///Basic function to translate a Windows path to Unix
+    /// expecting a full path starting at a root level entry
+    fn from_slash(s: &String) -> String {
+        let temp_str = str::replace(&s, "\\\\", "\\");
+        str::replace(&temp_str, "\\", "/")
+    }
+    /// convert an InputPath in Windows format to a linux format
+    pub fn convert_to_unix(input: Json<InputPath>) -> Json<InputPath> {
+        let path = InputPath {
+            input_path: InputPath::from_slash(&input.input_path.to_string()),
+        };
+        Json::from(path)
     }
 }
 #[derive(Serialize, JsonSchema)]
@@ -87,6 +100,7 @@ impl QuietPaths {
             paths_list: get_walk(input_path.input_path.as_str()),
         }
     }
+    /// Return a Paths struct from a QuietPaths
     pub fn to_paths(&self) -> Paths {
         let data: Vec<PathBuf> = self
             .paths_list
@@ -95,6 +109,7 @@ impl QuietPaths {
             .collect::<Vec<PathBuf>>();
         Paths::new(data)
     }
+    /// return a QuietPaths struct form a Paths
     pub fn from_paths(paths: Paths) -> Self {
         let paths_list: Vec<String> = paths
             .par_iter()
@@ -104,6 +119,7 @@ impl QuietPaths {
             paths_list: paths_list,
         }
     }
+    /// Return a packed QuietPaths struct using `framels` lib
     pub fn packed(&self) -> Self {
         QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
     }
@@ -111,5 +127,17 @@ impl QuietPaths {
         QuietPaths {
             paths_list: vec![s],
         }
+    }
+    /// Convert a QuietPaths using "/" to paths using "\\"
+    pub fn convert_windows(&mut self) {
+        let new_paths_list = self
+            .paths_list
+            .par_iter()
+            .map(|x| QuietPaths::to_slash(x))
+            .collect::<Vec<String>>();
+        self.paths_list = new_paths_list;
+    }
+    fn to_slash(s: &String) -> String {
+        str::replace(&s, "/", "\\")
     }
 }

@@ -48,8 +48,30 @@ fn get_os() -> &'static str {
 fn coffee() -> status::Custom<content::RawJson<&'static str>> {
     status::Custom(Status::ImATeapot, content::RawJson("{ \"hi\": \"world\" }"))
 }
+fn commun_manipulations(
+    input_paths: QuietPaths,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    let mut path_packed = if packed.unwrap_or(false) {
+        input_paths.packed()
+    } else {
+        input_paths
+    };
+    let path_windows = if windows.unwrap_or(false) {
+        path_packed.convert_windows();
+        path_packed
+    } else {
+        path_packed
+    };
+    Json(path_windows)
+}
 #[openapi(tag = "FileSystem")]
-#[post("/walk?<packed>", format = "application/json", data = "<input_path>")]
+#[post(
+    "/walk?<packed>&<windows>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # walk
 ///
 /// ## Description
@@ -65,17 +87,20 @@ fn coffee() -> status::Custom<content::RawJson<&'static str>> {
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
-fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let input_path: QuietPaths = QuietPaths::from_walk(input_path);
-    if packed.unwrap_or(false) {
-        Json(input_path.packed())
-    } else {
-        Json(input_path)
-    }
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
+fn fwalk(
+    input_path: Json<InputPath>,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    commun_manipulations(QuietPaths::from_walk(input_path), packed, windows)
 }
 #[openapi(tag = "FileSystem")]
 #[post(
-    "/listdir?<packed>",
+    "/listdir?<packed>&<windows>",
     format = "application/json",
     data = "<input_path>"
 )]
@@ -94,17 +119,24 @@ fn fwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> 
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
-fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
-    let input_path: QuietPaths = QuietPaths::from_listdir(input_path);
-    if packed.unwrap_or(false) {
-        Json(input_path.packed())
-    } else {
-        Json(input_path)
-    }
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
+fn flistdir(
+    input_path: Json<InputPath>,
+    packed: Option<bool>,
+    windows: Option<bool>,
+) -> Json<QuietPaths> {
+    commun_manipulations(QuietPaths::from_listdir(input_path), packed, windows)
 }
 
 #[openapi(tag = "FileSystem")]
-#[post("/glob?<packed>", format = "application/json", data = "<input_path>")]
+#[post(
+    "/glob?<packed>&<windows>",
+    format = "application/json",
+    data = "<input_path>"
+)]
 /// # glob
 ///
 /// ## Description
@@ -120,6 +152,10 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 /// ### packed
 ///
 /// You can use a filter `packed=true` or `packed=true` to pack frame sequences
+/// 
+///  ### windows
+///
+/// You can force to accept windows path by using windows filter
 ///
 /// ### Error
 ///
@@ -128,15 +164,10 @@ fn flistdir(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPath
 fn fglob(
     input_path: Json<InputPath>,
     packed: Option<bool>,
+    windows: Option<bool>,
 ) -> Result<Json<QuietPaths>, Custom<String>> {
     match QuietPaths::from_glob(input_path) {
-        Ok(val) => {
-            if packed.unwrap_or(false) {
-                Ok(Json(val.packed()))
-            } else {
-                Ok(Json(val))
-            }
-        }
+        Ok(val) => Ok(commun_manipulations(val, packed, windows)),
         Err(err) => {
             // Construct a 400 Bad Request response with the error message
             let response = Custom(Status::BadRequest, format!("Error: {}", err));
