@@ -28,9 +28,9 @@ fn index() -> &'static str {
 #[openapi(tag = "Default")]
 #[get("/os")]
 /// # os
-/// 
+///
 /// ## Description
-/// 
+///
 /// Get the current os of the service, really helpful to path formating
 fn get_os() -> &'static str {
     env::consts::OS

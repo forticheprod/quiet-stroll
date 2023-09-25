@@ -25,8 +25,14 @@ pub fn get_walk(input_path: &str) -> Vec<String> {
     WalkDir::new(input_path)
         .sort(true)
         .into_iter()
-        .filter_map(|entry| entry.ok())
-        .map(|entry| entry.path().display().to_string())
+        .filter_map(|entry| {
+            let path = entry.ok()?.path();
+            if path.is_file() {
+                Some(path.display().to_string())
+            } else {
+                None
+            }
+        })
         .collect()
 }
 
