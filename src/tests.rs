@@ -58,3 +58,11 @@ fn test_recursive_glob() {
     assert_eq!(response.status(), Status::BadRequest);
     assert_eq!(response.into_string().unwrap(), "Error: Pattern syntax error near position 12: recursive wildcards must form a single path component");
 }
+#[test]
+fn test_glob_walk() {
+    let message = InputPath::new("./samples/*.tif".to_string());
+    let client = Client::tracked(rocket()).expect("valid rocket instance");
+    let response = client.post("/globwalk").json(&message).dispatch();
+    assert_eq!(response.status(), Status::Ok);
+    assert_eq!(response.into_string().unwrap().replace("\\\\", "/"),"{\"paths_list\":[\"samples/aaa.001.tif\",\"samples/aaa.002.tif\",\"samples/aaa.003.tif\",\"samples/aaa.004.tif\",\"samples/aaa.005.tif\"]}");
+}

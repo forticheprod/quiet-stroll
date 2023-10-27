@@ -18,6 +18,7 @@ serde_json = "1.0.91"
 glob = "0.3.1"
 schemars = "0.8.10"
 framels = "0.5.2"
+globwalk = "0.8.1"
 
 [dependencies.rocket]
 version = "0.5.0-rc.3"

@@ -145,12 +145,31 @@ fn fglob(
     }
 }
 
+#[openapi(tag = "FileSystem")]
+#[post("/globwalk?<packed>", format = "application/json", data = "<input_path>")]
+fn fglogwalk(input_path: Json<InputPath>, packed: Option<bool>) -> Json<QuietPaths> {
+    match QuietPaths::from_glob_walk(input_path) {
+        Ok(val) => {
+            if packed.unwrap_or(false) {
+                Json(val.packed())
+            } else {
+                Json(val)
+            }
+        }
+        Err(err) => {
+            // Construct a 400 Bad Request response with the error message
+            let _ = Custom(Status::BadRequest, format!("Error: {}", err));
+            Json(QuietPaths::from_string(format!("Error: {}", err)))
+        }
+    }
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount(
             "/",
-            openapi_get_routes![index, flistdir, fglob, fwalk, coffee, get_os],
+            openapi_get_routes![index, flistdir, fglob, fwalk, fglogwalk, coffee, get_os],
         )
         .mount(
             "/docs/",

@@ -1,6 +1,7 @@
 use framels::{basic_listing, paths::Paths};
 use glob::glob;
 use glob::PatternError;
+use globwalk;
 use jwalk::rayon::prelude::IntoParallelRefIterator;
 use jwalk::rayon::prelude::ParallelIterator;
 use jwalk::WalkDir;
@@ -44,7 +45,21 @@ pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
         .map(|entry| entry.display().to_string())
         .collect())
 }
-
+pub fn get_glob_walk(input_path: &str) -> Result<Vec<String>, PatternError> {
+    let paths = globwalk::GlobWalkerBuilder::from_patterns(input_path, &["*"])
+        .build()
+        .unwrap();
+    Ok(paths
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path().display().to_string())
+        .collect())
+}
+#[test]
+fn test_get_glob_walk() {
+    let paths = get_glob_walk("/tmp/*").unwrap();
+    assert_eq!(paths.len(), 1);
+    assert_eq!(paths[0], "src/lib.rs");
+}
 #[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
 /// InputPath is a simple struct to represent an input_path
@@ -79,6 +94,15 @@ impl QuietPaths {
     pub fn from_glob(input_path: Json<InputPath>) -> Result<Self, PatternError> {
         Ok(QuietPaths {
             paths_list: get_glob(input_path.input_path.as_str())?,
+        })
+    }
+    /// Create a QuietPaths from a get_glob_walk function can return a error if
+    /// if the pattern is not supported by glob lib like double wild card in
+    /// the middle of a path
+    /// This function is slower than from_glob
+    pub fn from_glob_walk(input_path: Json<InputPath>) -> Result<Self, PatternError> {
+        Ok(QuietPaths {
+            paths_list: get_glob_walk(input_path.input_path.as_str())?,
         })
     }
     /// Create a QuietPaths from a get_walk function
