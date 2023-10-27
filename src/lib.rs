@@ -87,6 +87,7 @@ impl QuietPaths {
             paths_list: get_walk(input_path.input_path.as_str()),
         }
     }
+    /// Create a QuietPaths from a get_walk function
     pub fn to_paths(&self) -> Paths {
         let data: Vec<PathBuf> = self
             .paths_list
@@ -95,6 +96,7 @@ impl QuietPaths {
             .collect::<Vec<PathBuf>>();
         Paths::new(data)
     }
+    /// Create a QuietPaths from a get_walk function
     pub fn from_paths(paths: Paths) -> Self {
         let paths_list: Vec<String> = paths
             .par_iter()
@@ -104,9 +106,12 @@ impl QuietPaths {
             paths_list: paths_list,
         }
     }
+    /// Pack a quiet path to a basic listing using framels lib
     pub fn packed(&self) -> Self {
         QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
     }
+    /// create a QuietPaths from a string
+    /// mainly for testing purpose
     pub fn from_string(s: String) -> Self {
         QuietPaths {
             paths_list: vec![s],
