@@ -14,10 +14,10 @@ repository = "https://github.com/forticheprod/quiet-stroll"
 
 [dependencies]
 jwalk = "0.8.1"
-serde_json = "1.0.91"
+serde_json = "1.0.108"
 glob = "0.3.1"
-schemars = "0.8.10"
-framels = "0.5.2"
+schemars = "0.8.15"
+framels = "0.5.3"
 
 [dependencies.rocket]
 version = "0.5.0-rc.3"
