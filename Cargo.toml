@@ -1,6 +1,6 @@
 [package]
 name = "quiet-stroll"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["Philippe Llerena<philippe.llerena@gmail.com>"]
 description = "A web server to deliver basic File System informations"
