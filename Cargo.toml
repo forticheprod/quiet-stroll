@@ -18,11 +18,11 @@ serde_json = "1.0.108"
 glob = "0.3.1"
 schemars = "0.8.15"
 framels = "0.5.3"
+rocket_okapi = { git = "https://github.com/GREsau/okapi.git", features = [
+    "swagger",
+    "rapidoc",
+] }
 
 [dependencies.rocket]
-version = "0.5.0-rc.3"
+version = "0.5.0"
 features = ["json"]
-
-[dependencies.rocket_okapi]
-version = "0.8.0-rc.3"
-features = ["swagger"]
