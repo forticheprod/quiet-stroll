@@ -11,6 +11,13 @@ fn hello_world() {
     assert_eq!(response.status(), Status::Ok);
     assert_eq!(response.into_string().unwrap(), "Hello, world!");
 }
+/// Test docs
+#[test]
+fn test_docs() {
+    let client = Client::tracked(rocket()).expect("valid rocket instance");
+    let response = client.get("/docs").dispatch();
+    assert_eq!(response.status(), Status::SeeOther);
+}
 /// Test the walk function
 #[test]
 fn test_walk() {
