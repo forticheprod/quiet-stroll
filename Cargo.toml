@@ -6,7 +6,6 @@ authors = ["Philippe Llerena<philippe.llerena@gmail.com>"]
 description = "A web server to deliver basic File System informations"
 readme = "README.md"
 license-file = "LICENSE"
-documentation = "https://github.com/forticheprod/quiet-stroll/blob/main/README.md"
 repository = "https://github.com/forticheprod/quiet-stroll"
 
 
