@@ -94,7 +94,7 @@ impl QuietPaths {
             .par_iter()
             .map(|x| PathBuf::from(x))
             .collect::<Vec<PathBuf>>();
-        Paths::new(data)
+        Paths::from(data)
     }
     /// Create a QuietPaths from a get_walk function
     pub fn from_paths(paths: Paths) -> Self {
