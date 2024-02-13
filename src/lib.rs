@@ -108,7 +108,7 @@ impl QuietPaths {
     }
     /// Pack a quiet path to a basic listing using framels lib
     pub fn packed(&self) -> Self {
-        QuietPaths::from_paths(basic_listing(self.to_paths()).get_paths())
+        QuietPaths::from_paths(basic_listing(self.to_paths(), true).get_paths())
     }
     /// create a QuietPaths from a string
     /// mainly for testing purpose
