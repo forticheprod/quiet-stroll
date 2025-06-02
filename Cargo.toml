@@ -15,7 +15,7 @@ repository = "https://github.com/forticheprod/quiet-stroll"
 jwalk = "0.8.1"
 serde_json = "1.0.138"
 glob = "0.3.2"
-schemars = "0.8.21"
+schemars = "0.9.0"
 framels = "0.7.6"
 
 [dependencies.rocket]
