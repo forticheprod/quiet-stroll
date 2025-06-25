@@ -3,6 +3,7 @@ use glob::glob;
 use glob::PatternError;
 use jwalk::rayon::prelude::IntoParallelRefIterator;
 use jwalk::rayon::prelude::ParallelIterator;
+use jwalk::rayon::prelude::IntoParallelIterator;
 use jwalk::WalkDir;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket_okapi::okapi::schemars;
@@ -39,10 +40,16 @@ pub fn get_list_dir(input_path: &str) -> Vec<String> {
 
 pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
     let paths = glob(input_path)?;
-    Ok(paths
-        .filter_map(|entry| entry.ok())
+    
+    // Collect glob results, filtering out errors, then process in parallel
+    let path_results: Vec<_> = paths.filter_map(|entry| entry.ok()).collect();
+    
+    let result: Vec<String> = path_results
+        .into_par_iter()
         .map(|entry| entry.display().to_string())
-        .collect())
+        .collect();
+    
+    Ok(result)
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
