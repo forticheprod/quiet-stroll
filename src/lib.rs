@@ -38,6 +38,10 @@ pub fn get_list_dir(input_path: &str) -> Vec<String> {
     dir_list
 }
 
+/// Get glob results and process them in parallel for improved performance
+/// 
+/// This function uses rayon for parallel processing of path string conversion,
+/// which significantly improves performance when dealing with large file sets.
 pub fn get_glob(input_path: &str) -> Result<Vec<String>, PatternError> {
     let paths = glob(input_path)?;
     
